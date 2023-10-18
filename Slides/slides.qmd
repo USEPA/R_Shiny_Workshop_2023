@@ -1,0 +1,364 @@
+---
+title: ""
+format: 
+  revealjs:
+    theme: style_epa.scss
+    chalkboard: TRUE
+    progress: TRUE
+    width: "1400"
+    background-image: img/body_top.PNG
+    background-size: "cover"
+---
+
+```{r setup, include=FALSE}
+library(countdown)
+```
+
+# R Shiny{background-image="img/title_left.PNG" background-size="cover"}
+
+::: {style="margin-top: 20px; font-size: 1em; color: black;"}
+Getting the Most out of Shiny at EPA
+:::
+
+::: {style="margin-top: 20px; font-size: 0.5em; color: black;"}
+EPA R User Workshop (October 18, 2023)
+
+Andrew Murray<br>Office of Research and Development<br>
+Contamination Analysis and Innovative Solutions Branch.
+:::
+
+
+## Workshop Overview
+:::: {.columns}
+
+::: {.column width="33%"}
+**Building Shiny Applications (1:00 - 2:00)**
+
+- What is Shiny?
+- When and when **NOT** to use Shiny
+- A Basic Application
+- Understanding Reactivity
+- Efficient Coding
+:::
+
+::: {.column width="33%"}
+**Advanced Functionality & Deployment (2:20 - 3:20)**
+
+
+:::
+
+::: {.column width="33%"}
+**Advanced Functionality & Deployment (3:10 - 5:00)**
+
+- Advanced Features
+  - Crosstalk
+  - Using Data from the Web
+  - Generating Reports
+- Custom & EPA Styling
+- Deploying Your App
+:::
+
+::::
+
+## What is Shiny?
+
+### TLDR:
+Shiny allows you to deploy a web application that is capable of executing R code in real time.
+
+### What does that mean?
+This means that whoever is using a shiny app, can get information relevant to their needs and actually run analyses within the limits imposed by whoever wrote the application.
+
+### Why should I use Shiny?
+- Supercharge science communication (internally and externally)
+- Increase collaboration
+- Increased product value to the public
+- Allows that code you worked so hard on to actually be used.
+
+
+
+:::{.darkgreen}
+This is some dark(ish) green text.
+:::
+
+Quarto enables you to weave together content and executable code into a finished presentation. To learn more about Quarto presentations see <https://quarto.org/docs/presentations/>.
+
+## Shiny Implementations{background-image="img/body_top.PNG" background-size="cover"}
+
+
+## A Basic Shiny App{background-image="img/body_top.PNG" background-size="cover"}
+There are two basic components to every shiny app:
+
+:::: {.columns}
+
+::: {.column width="50%"}
+- The User Interface
+
+This is where we design the look and feel of the app
+
+```{r, echo = TRUE, eval = FALSE}
+# Define UI for application that shows a map
+ui <- fluidPage(
+  # Selector
+  selectInput(
+    inputId = "fCast",
+    label = "Select a Forecast",
+    choices = sf$fLabel,
+    selected = sf$fLabel[1]),
+  # Finished Map
+  leafletOutput("map")
+)
+```
+:::
+
+::: {.column width="50%"}
+- The Server
+
+This is where the R code is executed
+
+```{r, echo = TRUE, eval = FALSE}
+# Define server logic required to render a map
+server <- function(input, output) {
+
+  # Filter the hurricane tracks
+  sf.filt <- reactive(
+    sf%>%
+      filter(fLabel == input$fCast)
+  )
+  
+  # Render the map
+  output$map <- renderLeaflet(
+    leaflet(sf.filt())%>%
+      addTiles()%>%
+      addPolygons())
+}
+```
+:::
+::::
+
+## Components of the UI: Inputs{background-image="img/body_top.PNG" background-size="cover"}
+
+:::: {.columns}
+
+::: {.column width="40%"}
+- The User Interface
+
+This is where we design the look and feel of the app
+
+```{r, echo = TRUE, eval = FALSE, 'code-line-numbers'="3-8"}
+# Define UI for application that shows a map
+ui <- fluidPage(
+  # Selector
+  selectInput(
+    inputId = "fCast",
+    label = "Select a Forecast",
+    choices = sf$fLabel,
+    selected = sf$fLabel[1]),
+  # Finished Map
+  leafletOutput("map")
+)
+```
+:::
+
+::: {.column width="60%"}
+
+We are using a 'select' input which allows the user to select a single option.
+
+We have defined our input with the following variables:
+
+- `inputId` -- gives us an id to use later on when we write code
+- `label` -- adds some text above the input
+- `choices` -- the list the user can select from
+- `selected` -- a default selection
+
+
+Check out the [Shiny cheatsheet](https://shiny.posit.co/r/articles/start/cheatsheet/) for more input examples.
+
+:::
+::::
+
+
+## Components of the UI: Outputs{background-image="img/body_top.PNG" background-size="cover"}
+
+:::: {.columns}
+
+::: {.column width="40%"}
+- The User Interface
+
+This is where we design the look and feel of the app
+
+```{r, echo = TRUE, eval = FALSE, 'code-line-numbers'="9-10"}
+# Define UI for application that shows a map
+ui <- fluidPage(
+  # Selector
+  selectInput(
+    inputId = "fCast",
+    label = "Select a Forecast",
+    choices = sf$fLabel,
+    selected = sf$fLabel[1]),
+  # Finished Map
+  leafletOutput("map")
+)
+```
+:::
+
+::: {.column width="60%"}
+
+Outputs have specific functions to make them viewable within the application. Here we are showing a leaflet app, so we use the `leafletOutput()` function. This partners with the render function: `renderLeaflet()` that lives in the server portion of our code.
+
+Some common output types are:
+
+- `dataTableOutput()`
+- `plotOutput()`
+- `imageOutput()`
+- `textOutput()`
+
+:::
+::::
+
+## The Server{background-image="img/body_top.PNG" background-size="cover"}
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r, echo = TRUE, eval = FALSE, 'code-line-numbers'="4-8|10-14"}
+# Define server logic required to render a map
+server <- function(input, output) {
+
+  # Filter the hurricane tracks
+  sf.filt <- reactive(
+    sf%>%
+      filter(fLabel == input$fCast)
+  )
+  
+  # Render the map
+  output$map <- renderLeaflet(
+    leaflet(sf.filt())%>%
+      addTiles()%>%
+      addPolygons())
+}
+```
+:::
+
+::: {.column width="50%"}
+The server portion of our app is doing two things
+
+1. Creating a reactive sf object that is a filtered subset of our data based on our select input
+
+2. Rendering a leaflet map using the reactive sf object and assigning it to an input that can be called in the user interface (UI)
+
+
+Notice anything familiar from the UI?
+
+:::
+::::
+
+## UI & Server
+
+:::: {.columns}
+::: {.column width="50%"}
+
+UI
+
+```{r, echo = TRUE, eval = FALSE, 'code-line-numbers'="5"}
+# Define UI for application that shows a map
+ui <- fluidPage(
+  # Selector
+  selectInput(
+    inputId = "fCast",
+    label = "Select a Forecast",
+    choices = sf$fLabel,
+    selected = sf$fLabel[1]),
+  # Finished Map
+  leafletOutput("map")
+)
+```
+
+<div style="text-align: right"> `input$fCast` feeds into the server {{< fa arrow-right >}} </div>
+
+
+:::
+
+::: {.column width="50%"}
+
+Server
+
+```{r, echo = TRUE, eval = FALSE, 'code-line-numbers'="7"}
+# Define server logic required to render a map
+server <- function(input, output) {
+
+  # Filter the hurricane tracks
+  sf.filt <- reactive(
+    sf%>%
+      filter(fLabel == input$fCast)
+  )
+  
+  # Render the map
+  output$map <- renderLeaflet(
+    leaflet(sf.filt())%>%
+      addTiles()%>%
+      addPolygons())
+}
+```
+:::
+::::
+
+## UI & Server
+
+:::: {.columns}
+::: {.column width="50%"}
+
+UI
+
+```{r, echo = TRUE, eval = FALSE, 'code-line-numbers'="10"}
+# Define UI for application that shows a map
+ui <- fluidPage(
+  # Selector
+  selectInput(
+    inputId = "fCast",
+    label = "Select a Forecast",
+    choices = sf$fLabel,
+    selected = sf$fLabel[1]),
+  # Finished Map
+  leafletOutput("map")
+)
+```
+<div style="text-align: right"> {{< fa arrow-up >}} `output$map` feeds into the server </div>
+
+:::
+
+::: {.column width="50%"}
+
+Server
+
+```{r, echo = TRUE, eval = FALSE, 'code-line-numbers'="11"}
+# Define server logic required to render a map
+server <- function(input, output) {
+
+  # Filter the hurricane tracks
+  sf.filt <- reactive(
+    sf%>%
+      filter(fLabel == input$fCast)
+  )
+  
+  # Render the map
+  output$map <- renderLeaflet(
+    leaflet(sf.filt())%>%
+      addTiles()%>%
+      addPolygons())
+}
+```
+:::
+::::
+
+## Layouts
+
+
+- [Layout Guide](https://shiny.posit.co/r/articles/build/layout-guide/)
+
+
+### Your Turn!
+
+```{r}
+countdown(minutes = 5,
+          warn_when = 30)
+```
+
