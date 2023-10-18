@@ -406,11 +406,11 @@
 <p>Andrew Murray<br>Office of Research and Development<br> Contamination Analysis and Innovative Solutions Branch.</p>
 </div>
 </section>
-<section id="workshop-overview" class="slide level2">
+<section id="workshop-overview" class="slide level2" data-background-image="img/title_left.PNG" data-background-size="cover">
 <h2>Workshop Overview</h2>
 <div class="columns">
 <div class="column" style="width:33%;">
-<p><strong>Building Shiny Applications (1:00 - 2:00)</strong></p>
+<p><strong>Building Shiny Apps (1:00 - 2:00)</strong></p>
 <ul>
 <li>What is Shiny?</li>
 <li>When and when <strong>NOT</strong> to use Shiny</li>
@@ -419,23 +419,23 @@
 <li>Efficient Coding</li>
 </ul>
 </div><div class="column" style="width:33%;">
-<p><strong>Advanced Functionality &amp; Deployment (2:20 - 3:20)</strong></p>
-</div><div class="column" style="width:33%;">
-<p><strong>Advanced Functionality &amp; Deployment (3:10 - 5:00)</strong></p>
+<p><strong>Advanced Functionality (2:20 - 3:20)</strong></p>
 <ul>
-<li>Advanced Features
-<ul>
-<li>Crosstalk</li>
 <li>Using Data from the Web</li>
+<li>Crosstalk</li>
 <li>Generating Reports</li>
-</ul></li>
+</ul>
+</div><div class="column" style="width:33%;">
+<p><strong>Advanced Functionality &amp; Deployment (3:40 - 5:00)</strong></p>
+<ul>
 <li>Custom &amp; EPA Styling</li>
+<li>POSIT Connect</li>
 <li>Deploying Your App</li>
 </ul>
 </div>
 </div>
 </section>
-<section id="what-is-shiny" class="slide level2">
+<section id="what-is-shiny" class="slide level2" data-background-image="img/title_left.PNG" data-background-size="cover">
 <h2>What is Shiny?</h2>
 <h3 id="tldr">TLDR:</h3>
 <p>Shiny allows you to deploy a web application that is capable of executing R code in real time.</p>
@@ -448,13 +448,56 @@
 <li>Increased product value to the public</li>
 <li>Allows that code you worked so hard on to actually be used.</li>
 </ul>
-<div class="darkgreen">
-<p>This is some dark(ish) green text.</p>
+</section>
+<section id="when-should-i-not-use-shiny" class="slide level2" data-background-image="img/title_left.PNG" data-background-size="cover">
+<h2>When should I not use Shiny?</h2>
+<div class="columns">
+<div class="column" style="width:30%;">
+<h3 id="flex-dashboards">Flex Dashboards</h3>
+<ul>
+<li>Flex dashboards filter but don’t execute.</li>
+<li>Can be beneficial when:
+<ul>
+<li>you are focused on customized subsets of data</li>
+</ul></li>
+<li>code does not need to be executed</li>
+<li>you want to be able to email the dashboard to someone</li>
+</ul>
+<p><a href="https://posit.co/blog/flexdashboard-easy-interactive-dashboards-for-r/">Read more about flexdashboard here</a></p>
+</div><div class="column" style="width:70%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="img/flexdashboard.png" style="width:70.0%"></p>
+<figcaption><a href="https://jjallaire.shinyapps.io/shiny-ggplot2-diamonds/">flexdashboard example</a></figcaption>
+</figure>
 </div>
-<p>Quarto enables you to weave together content and executable code into a finished presentation. To learn more about Quarto presentations see <a href="https://quarto.org/docs/presentations/" class="uri">https://quarto.org/docs/presentations/</a>.</p>
+</div>
+</div>
 </section>
 <section id="shiny-implementations" class="slide level2" data-background-image="img/body_top.PNG" data-background-size="cover">
 <h2>Shiny Implementations</h2>
+<div class="columns">
+<div class="column" style="width:40%;">
+<p>Shiny is used for all sorts of applications:</p>
+<ul>
+<li>Mapping and Routing</li>
+<li>Data Visualization</li>
+<li>Automated Reports</li>
+<li>Surveys</li>
+<li>A lot more…</li>
+</ul>
+<p>The best way to get inspired is to check out what others are doing:</p>
+<p><a href="https://rstudio-connect.dmap-stage.aws.epa.gov/connect/#/content/listing?filter=min_role:viewer&amp;filter=content_type:all&amp;view_type=compact">EPA POSIT Connect Server</a></p>
+<p><a href="https://shiny.posit.co/r/gallery/">R Shiny Gallery</a></p>
+</div><div class="column" style="width:60%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="img/EJ_App.png" style="width:80.0%"></p>
+<figcaption>An Example Shiny App</figcaption>
+</figure>
+</div>
+</div>
+</div>
 </section>
 <section id="a-basic-shiny-app" class="slide level2" data-background-image="img/body_top.PNG" data-background-size="cover">
 <h2>A Basic Shiny App</h2>
@@ -601,8 +644,8 @@
 </div>
 </div>
 </section>
-<section id="ui-server" class="slide level2">
-<h2>UI &amp; Server</h2>
+<section id="ui-server" class="slide level2" data-background-image="img/title_left.PNG" data-background-size="cover">
+<h2>UI → Server</h2>
 <div class="columns">
 <div class="column" style="width:50%;">
 <p>UI</p>
@@ -644,8 +687,8 @@
 </div>
 </div>
 </section>
-<section id="ui-server-1" class="slide level2">
-<h2>UI &amp; Server</h2>
+<section id="ui-server-1" class="slide level2" data-background-image="img/title_left.PNG" data-background-size="cover">
+<h2>UI ← Server</h2>
 <div class="columns">
 <div class="column" style="width:50%;">
 <p>UI</p>
@@ -687,20 +730,104 @@
 </div>
 </div>
 </section>
+<section id="reactive-expressions-vs.-observers" class="slide level2" data-background-image="img/title_left.PNG" data-background-size="cover">
+<h2>Reactive Expressions vs.&nbsp;Observers</h2>
+<div class="columns">
+<div class="column" style="width:45%;">
+<p>Reactive Values are <strong>lazy</strong></p>
+<ul>
+<li>Used to create something to be used somewhere else
+<ul>
+<li>Could be a text string, a data frame, an sf object etc…</li>
+<li>Does not run until it has to</li>
+<li>Typically used as a first step in whatever code you are running</li>
+</ul></li>
+</ul>
+</div><div class="column" style="width:10%;">
+
+</div><div class="column" style="width:45%;">
+<p>Observers are <strong>eager</strong></p>
+<ul>
+<li>The code inside an observer will run whenever <strong>ANY</strong> input inside of it is changed</li>
+<li>When the code runs, it will trigger any upstream reactive values</li>
+<li>Observers should be downstream of any large data to conserve computation time.</li>
+<li>Typically used to create outputs that are ready to be sent back to the UI for the end user to see.</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="reactive-expressions-vs.-observers-exercise" class="slide level2" data-background-image="img/title_left.PNG" data-background-size="cover">
+<h2>Reactive Expressions vs.&nbsp;Observers (Exercise)</h2>
+<div class="columns">
+<div class="column" style="width:80%;">
+<p>Navigate to the ‘Apps’ folder in the workshop repository and open the app called ‘02_reactive’</p>
+<ul>
+<li>This simple application loads the iris dataset and generates a plot</li>
+<li>Without changing any of the code run the app
+<ul>
+<li>Why is nothing showing up?</li>
+</ul></li>
+<li>Experiment with commenting out the reactive expression in the server part of the code and un-commenting the observer functions.
+<ul>
+<li>How does the functionality of the application change?</li>
+</ul></li>
+</ul>
+<p>Try to re-write the code so that:</p>
+<p><strong>A.</strong> The iris data frame is filtered within an <code>eventReactive()</code> expression</p>
+<p><strong>B.</strong> A plot is displayed only when you click the ‘Apply Filter’ button.</p>
+</div><div class="column" style="width:20%;">
+<p><img data-src="https://media.giphy.com/media/LBsqN9KIwOrIx1CJ08/giphy.gif" style="width:100.0%"></p>
+<div class="cell">
+<div class="cell-output-display">
+<div class="countdown" id="timer_0b256451" data-warn-when="30" data-update-every="1" tabindex="0" style="right:0;bottom:0;">
+<div class="countdown-controls"><button class="countdown-bump-down">−</button><button class="countdown-bump-up">+</button></div>
+<code class="countdown-time"><span class="countdown-digits minutes">05</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="events" class="slide level2" data-background-image="img/title_left.PNG" data-background-size="cover">
+<h2>Events</h2>
+<p>There are two main variations of reactive and observe:</p>
+<p>Reactivity:</p>
+<ul>
+<li><code>reactive()</code></li>
+<li><code>eventReactive()</code></li>
+</ul>
+<p>Observer:</p>
+<ul>
+<li><code>observe()</code></li>
+<li><code>observeEvent()</code></li>
+</ul>
+<p>observe and reactive will execute on their own. Adding the event, links it to a trigger. A trigger is typically a button but could be another reactive value.</p>
+</section>
+<section id="efficient-coding" class="slide level2" data-background-image="img/title_left.PNG" data-background-size="cover">
+<h2>Efficient Coding</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<h3 id="do">Do:</h3>
+<ul>
+<li>Load as much data on the front end as you can</li>
+<li>filter as quickly and efficiently as possible</li>
+</ul>
+<h3 id="dont">Don’t:</h3>
+<ul>
+<li>Repeatedly load or download redundant data</li>
+<li>Perform redundant operations</li>
+</ul>
+</div><div class="column" style="width:50%;">
+<h3 id="exercise">Exercise</h3>
+</div>
+</div>
+</section>
 <section id="layouts" class="slide level2">
 <h2>Layouts</h2>
 <ul>
 <li><a href="https://shiny.posit.co/r/articles/build/layout-guide/">Layout Guide</a></li>
 </ul>
 <h3 id="your-turn">Your Turn!</h3>
-<div class="cell">
-<div class="cell-output-display">
-<div class="countdown" id="timer_12bc8dd7" data-warn-when="30" data-update-every="1" tabindex="0" style="right:0;bottom:0;">
-<div class="countdown-controls"><button class="countdown-bump-down">−</button><button class="countdown-bump-up">+</button></div>
-<code class="countdown-time"><span class="countdown-digits minutes">05</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
-</div>
-</div>
-</div>
 <div class="footer footer-default">
 
 </div>
@@ -880,9 +1007,6 @@
         // devices. It is advisable to set this to a lower number than
         // viewDistance in order to save resources.
         mobileViewDistance: 2,
-
-       // Parallax background image
-       parallaxBackgroundImage: 'img/body_top.PNG', // e.g. "'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg'"
 
         // The "normal" size of the presentation, aspect ratio will be preserved
         // when the presentation is scaled to fit different resolutions. Can be
