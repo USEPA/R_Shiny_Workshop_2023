@@ -410,23 +410,24 @@
 <h2>Workshop Overview</h2>
 <div class="columns">
 <div class="column" style="width:33%;">
-<p><strong>Building Shiny Apps (1:00 - 2:00)</strong></p>
+<p><strong>Building Shiny Apps<br>(1:00 - 2:00)</strong></p>
 <ul>
 <li>What is Shiny?</li>
-<li>When and when <strong>NOT</strong> to use Shiny</li>
+<li>Flexdashboard</li>
 <li>A Basic Application</li>
 <li>Understanding Reactivity</li>
 <li>Efficient Coding</li>
 </ul>
 </div><div class="column" style="width:33%;">
-<p><strong>Advanced Functionality (2:20 - 3:20)</strong></p>
+<p><strong>Advanced Functionality<br>(2:20 - 3:20)</strong></p>
 <ul>
+<li>Basic Layouts</li>
 <li>Using Data from the Web</li>
 <li>Crosstalk</li>
 <li>Generating Reports</li>
 </ul>
 </div><div class="column" style="width:33%;">
-<p><strong>Advanced Functionality &amp; Deployment (3:40 - 5:00)</strong></p>
+<p><strong>Advanced Functionality &amp; Deployment<br>(3:40 - 5:00)</strong></p>
 <ul>
 <li>Custom &amp; EPA Styling</li>
 <li>POSIT Connect</li>
@@ -779,7 +780,7 @@
 <p><img data-src="https://media.giphy.com/media/LBsqN9KIwOrIx1CJ08/giphy.gif" style="width:100.0%"></p>
 <div class="cell">
 <div class="cell-output-display">
-<div class="countdown" id="timer_0b256451" data-warn-when="30" data-update-every="1" tabindex="0" style="right:0;bottom:0;">
+<div class="countdown" id="timer_529b0e35" data-warn-when="30" data-update-every="1" tabindex="0" style="right:0;bottom:0;">
 <div class="countdown-controls"><button class="countdown-bump-down">−</button><button class="countdown-bump-up">+</button></div>
 <code class="countdown-time"><span class="countdown-digits minutes">05</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
 </div>
@@ -801,7 +802,7 @@
 <li><code>observe()</code></li>
 <li><code>observeEvent()</code></li>
 </ul>
-<p>observe and reactive will execute on their own. Adding the event, links it to a trigger. A trigger is typically a button but could be another reactive value.</p>
+<p>observe and reactive will execute on their own. Adding the event, links it to a trigger. A trigger is most often a button but could be another reactive value or any type of input that changes.</p>
 </section>
 <section id="efficient-coding" class="slide level2" data-background-image="img/title_left.PNG" data-background-size="cover">
 <h2>Efficient Coding</h2>
@@ -817,17 +818,123 @@
 <li>Repeatedly load or download redundant data</li>
 <li>Perform redundant operations</li>
 </ul>
+<div class="cell">
+<div class="cell-output-display">
+<div class="countdown" id="timer_a48ca392" data-warn-when="30" data-update-every="1" tabindex="0" style="bottom:0;left:50;">
+<div class="countdown-controls"><button class="countdown-bump-down">−</button><button class="countdown-bump-up">+</button></div>
+<code class="countdown-time"><span class="countdown-digits minutes">05</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
+</div>
+</div>
+</div>
 </div><div class="column" style="width:50%;">
 <h3 id="exercise">Exercise</h3>
+<p>Open the app.R file in the ‘Apps/03_efficient_code/’ folder.</p>
+<p>This app loads county level polygons from the <code>tigris</code> package and generates two simple outputs.</p>
+<ul>
+<li>Run the application and review the code to understand how the app is calling the data.</li>
+<li>Notice that the <code>counties()</code> function is called every time the user changes the state in the dropdown menu.</li>
+<li>Try your hand at rewriting the code so that the data is downloaded only once and create an observer to update the output map and plot when the state selection is switched.</li>
+</ul>
 </div>
 </div>
 </section>
-<section id="layouts" class="slide level2">
+<section id="layouts" class="slide level2" data-background-image="img/title_left.PNG" data-background-size="cover">
 <h2>Layouts</h2>
+<div class="columns">
+<div class="column" style="width:20%;">
+<p>Shiny provides a number of pre-made layouts that can be almost infinitely customized. If you have experience with writing HTML, you could even write an entirely custom layout.</p>
+<p><br><br></p>
+<p><a href="https://shiny.posit.co/r/articles/build/layout-guide/">Layout Guide</a></p>
+</div><div class="column" style="width:40%;">
+<div class="quarto-figure quarto-figure-left">
+<figure>
+<p><img data-src="img/sidebar.png" style="width:80.0%"></p>
+<figcaption>Sidebar</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-left">
+<figure>
+<p><img data-src="img/navlist.png" style="width:80.0%"></p>
+<figcaption>Navlist</figcaption>
+</figure>
+</div>
+</div><div class="column" style="width:40%;">
+<div class="quarto-figure quarto-figure-left">
+<figure>
+<p><img data-src="img/tabset.png" style="width:80.0%"></p>
+<figcaption>Tabset</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-left">
+<figure>
+<p><img data-src="img/grid.png" style="width:80.0%"></p>
+<figcaption>Grid</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="layouts-example" class="slide level2" data-background-image="img/title_left.PNG" data-background-size="cover">
+<h2>Layouts: Example</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10" data-code-line-numbers="3,4,14,15,18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="co"># Define UI for application that draws a histogram</span></span>
+<span id="cb10-2"><a href="#cb10-2"></a>ui <span class="ot">&lt;-</span> <span class="fu">fluidPage</span>(</span>
+<span id="cb10-3"><a href="#cb10-3"></a>  <span class="fu">titlePanel</span>(<span class="st">"Adding a Sidebar Layout"</span>),</span>
+<span id="cb10-4"><a href="#cb10-4"></a>  <span class="fu">sidebarPanel</span>(</span>
+<span id="cb10-5"><a href="#cb10-5"></a>  <span class="fu">selectInput</span>(<span class="st">"state"</span>,<span class="st">"Select a State"</span>,</span>
+<span id="cb10-6"><a href="#cb10-6"></a>              <span class="at">choices =</span> <span class="fu">unique</span>(sf<span class="sc">$</span>State),</span>
+<span id="cb10-7"><a href="#cb10-7"></a>              <span class="at">selected =</span> <span class="st">"Ohio"</span>),</span>
+<span id="cb10-8"><a href="#cb10-8"></a>  <span class="fu">selectInput</span>(<span class="st">"x"</span>,<span class="st">"Choose X Variable"</span>,</span>
+<span id="cb10-9"><a href="#cb10-9"></a>              <span class="at">choices =</span> <span class="fu">colnames</span>(sf)[<span class="dv">4</span><span class="sc">:</span><span class="dv">12</span>],</span>
+<span id="cb10-10"><a href="#cb10-10"></a>              <span class="at">selected =</span> <span class="st">"Med_House_Val"</span>),</span>
+<span id="cb10-11"><a href="#cb10-11"></a>  <span class="fu">selectInput</span>(<span class="st">"y"</span>,<span class="st">"Choose y variable"</span>,</span>
+<span id="cb10-12"><a href="#cb10-12"></a>              <span class="at">choices =</span> <span class="fu">colnames</span>(sf)[<span class="dv">4</span><span class="sc">:</span><span class="dv">12</span>],</span>
+<span id="cb10-13"><a href="#cb10-13"></a>              <span class="at">selected =</span> <span class="st">"Population"</span>)</span>
+<span id="cb10-14"><a href="#cb10-14"></a>  ),</span>
+<span id="cb10-15"><a href="#cb10-15"></a>  <span class="fu">mainPanel</span>(</span>
+<span id="cb10-16"><a href="#cb10-16"></a>    <span class="fu">plotOutput</span>(<span class="st">"plot"</span>),</span>
+<span id="cb10-17"><a href="#cb10-17"></a>    <span class="fu">leafletOutput</span>(<span class="st">"map"</span>)</span>
+<span id="cb10-18"><a href="#cb10-18"></a>  )</span>
+<span id="cb10-19"><a href="#cb10-19"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div><div class="column" style="width:50%;">
+<h3 id="open-the-app.r-file-in-apps04_sidebar">Open the App.R file in ‘Apps/04_sidebar’</h3>
 <ul>
-<li><a href="https://shiny.posit.co/r/articles/build/layout-guide/">Layout Guide</a></li>
+<li>Look at the UI section of the code to understand how the layout is set up</li>
+<li>Try to manipulate the layout of the application so that the plot and the map are side by side.</li>
 </ul>
-<h3 id="your-turn">Your Turn!</h3>
+<p>*hint: you’ll want to use a fluidRow inside of the main panel with 2 columns.</p>
+<p>check out the <a href="https://shiny.posit.co/r/articles/build/layout-guide/">Layout Guide</a></p>
+<p>https://shiny.posit.co/r/articles/build/layout-guide/</p>
+</div><div class="cell">
+<div class="cell-output-display">
+<div class="countdown" id="timer_f6bbf180" data-warn-when="30" data-update-every="1" tabindex="0" style="bottom:0;left:50;">
+<div class="countdown-controls"><button class="countdown-bump-down">−</button><button class="countdown-bump-up">+</button></div>
+<code class="countdown-time"><span class="countdown-digits minutes">10</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="crosstalk" class="slide level2">
+<h2>Crosstalk</h2>
+</section>
+<section id="generating-reports" class="slide level2">
+<h2>Generating Reports</h2>
+</section>
+<section id="fetching-data-from-an-api" class="slide level2">
+<h2>Fetching Data from an API</h2>
+</section>
+<section id="fetching-data-from-a-feature-service" class="slide level2">
+<h2>Fetching Data from a feature Service</h2>
+</section>
+<section id="deploying-to-posit-connect" class="slide level2">
+<h2>Deploying to POSIT Connect</h2>
+</section>
+<section id="pins" class="slide level2">
+<h2>PINS</h2>
 <div class="footer footer-default">
 
 </div>
@@ -886,7 +993,7 @@
         progress: true,
 
         // Display the page number of the current slide
-        slideNumber: false,
+        slideNumber: 'c/t',
 
         // 'all', 'print', or 'speaker'
         showSlideNumber: 'all',

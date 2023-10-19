@@ -4,8 +4,8 @@ format:
   revealjs:
     theme: style_epa.scss
     chalkboard: TRUE
-    progress: TRUE
     width: "1400"
+    slide-number: true
 ---
 
 ```{r setup, include=FALSE}
@@ -30,25 +30,26 @@ Contamination Analysis and Innovative Solutions Branch.
 :::: {.columns}
 
 ::: {.column width="33%"}
-**Building Shiny Apps (1:00 - 2:00)**
+**Building Shiny Apps<br>(1:00 - 2:00)**
 
 - What is Shiny?
-- When and when **NOT** to use Shiny
+- Flexdashboard
 - A Basic Application
 - Understanding Reactivity
 - Efficient Coding
 :::
 
 ::: {.column width="33%"}
-**Advanced Functionality (2:20 - 3:20)**
+**Advanced Functionality<br>(2:20 - 3:20)**
 
+- Basic Layouts
 - Using Data from the Web
 - Crosstalk
 - Generating Reports
 :::
 
 ::: {.column width="33%"}
-**Advanced Functionality & Deployment (3:40 - 5:00)**
+**Advanced Functionality & Deployment<br>(3:40 - 5:00)**
 
 - Custom & EPA Styling
 - POSIT Connect
@@ -457,7 +458,7 @@ Observer:
 - `observe()`
 - `observeEvent()`
 
-observe and reactive will execute on their own. Adding the event, links it to a trigger. A trigger is typically a button but could be another reactive value.
+observe and reactive will execute on their own. Adding the event, links it to a trigger. A trigger is most often a button but could be another reactive value or any type of input that changes.
 
 ## Efficient Coding{background-image="img/title_left.PNG" background-size="cover"}
 
@@ -475,23 +476,121 @@ observe and reactive will execute on their own. Adding the event, links it to a 
 - Repeatedly load or download redundant data
 - Perform redundant operations
 
+```{r}
+countdown(minutes = 5,
+          warn_when = 30,
+          left = 50)
+```
+
 :::
 
 ::: {.column width="50%"}
 
 ### Exercise
 
+Open the app.R file in the 'Apps/03_efficient_code/' folder.
+
+This app loads county level polygons from the `tigris` package and generates two simple outputs.
+
+- Run the application and review the code to understand how the app is calling the data.
+- Notice that the `counties()` function is called every time the user changes the state in the dropdown menu.
+- Try your hand at rewriting the code so that the data is downloaded only once and create an observer to update the output map and plot when the state selection is switched.
+
 :::
 
 ::::
 
-## Layouts
+## Layouts{background-image="img/title_left.PNG" background-size="cover"}
+
+:::: {.columns}
+::: {.column width="20%"}
+
+Shiny provides a number of pre-made layouts that can be almost infinitely customized. If you have experience with writing HTML, you could even write an entirely custom layout.
+
+<br><br>
+
+[Layout Guide](https://shiny.posit.co/r/articles/build/layout-guide/)
+:::
+::: {.column width="40%"}
+![Sidebar](img/sidebar.png){width=80% fig-align="left"}
 
 
-- [Layout Guide](https://shiny.posit.co/r/articles/build/layout-guide/)
+![Navlist](img/navlist.png){width=80% fig-align="left"}
+:::
+::: {.column width="40%"}
+![Tabset](img/tabset.png){width=80% fig-align="left"}
+
+![Grid](img/grid.png){width=80% fig-align="left"}
+
+:::
+::::
+
+## Layouts: Example{background-image="img/title_left.PNG" background-size="cover"}
+
+:::: {.columns}
+::: {.column width="50%"}
+
+```{r layout, echo = TRUE, eval = FALSE, 'code-line-numbers'="3,4,14,15,18"}
+# Define UI for application that draws a histogram
+ui <- fluidPage(
+  titlePanel("Adding a Sidebar Layout"),
+  sidebarPanel(
+  selectInput("state","Select a State",
+              choices = unique(sf$State),
+              selected = "Ohio"),
+  selectInput("x","Choose X Variable",
+              choices = colnames(sf)[4:12],
+              selected = "Med_House_Val"),
+  selectInput("y","Choose y variable",
+              choices = colnames(sf)[4:12],
+              selected = "Population")
+  ),
+  mainPanel(
+    plotOutput("plot"),
+    leafletOutput("map")
+  )
+)
+```
+
+:::
+
+::: {.column width="50%"}
+
+### Open the App.R file in 'Apps/04_sidebar'
+
+- Look at the UI section of the code to understand how the layout is set up
+- Try to manipulate the layout of the application so that the plot and the map are side by side.
+
+*hint: you'll want to use a fluidRow inside of the main panel with 2 columns.
+
+check out the [Layout Guide](https://shiny.posit.co/r/articles/build/layout-guide/)
+
+https://shiny.posit.co/r/articles/build/layout-guide/
+:::
+
+```{r}
+countdown(minutes = 10,
+          warn_when = 30,
+          left = 50)
+```
+
+::::
 
 
-### Your Turn!
+## Crosstalk
 
 
+## Generating Reports
+
+
+## Fetching Data from an API
+
+
+## Fetching Data from a feature Service
+
+
+## Deploying to POSIT Connect
+
+
+## PINS
 
