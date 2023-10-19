@@ -27,6 +27,18 @@ Contamination Analysis and Innovative Solutions Branch.
 
 ## Materials{background-image="img/title_left.PNG" background-size="cover"}
 
+[Download Course Materials](https://github.com/USEPA/R_Shiny_Workshop_2023)
+
+https://github.com/USEPA/R_Shiny_Workshop_2023
+
+
+- Download as a zaip file and unzip the folder to a directory you can easily access.
+
+- Open the project in R Studio by double clicking the 'R_Shiny_Workshop_2023.Rproj' file or by navigating to this project file from RStudio
+
+- If you Don't have RStudio installed, sign up for a Posit.cloud account:
+
+https://posit.cloud/plans/free
 
 
 ## Workshop Overview{background-image="img/title_left.PNG" background-size="cover"}
