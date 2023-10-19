@@ -25,6 +25,9 @@ Andrew Murray<br>Office of Research and Development<br>
 Contamination Analysis and Innovative Solutions Branch.
 :::
 
+## Materials{background-image="img/title_left.PNG" background-size="cover"}
+
+
 
 ## Workshop Overview{background-image="img/title_left.PNG" background-size="cover"}
 :::: {.columns}
@@ -43,15 +46,13 @@ Contamination Analysis and Innovative Solutions Branch.
 **Advanced Functionality<br>(2:20 - 3:20)**
 
 - Basic Layouts
-- Using Data from the Web
 - Crosstalk
 - Generating Reports
 :::
 
 ::: {.column width="33%"}
 **Advanced Functionality & Deployment<br>(3:40 - 5:00)**
-
-- Custom & EPA Styling
+- Using Data from the Web
 - POSIT Connect
 - Deploying Your App
 :::
@@ -577,20 +578,354 @@ countdown(minutes = 10,
 ::::
 
 
-## Crosstalk
+## Crosstalk & Brushing{background-image="img/title_left.PNG" background-size="cover"}
+
+:::: {.columns}
+::: {.column width="50%"}
+
+Widgets in Shiny can inform one one another (as we have seen) but they can also communicate back and forth. This is typically done using one of two methods:
+
+**Brushing**
+
+- Think of this as a one-way communication where interacting with one widget changes another.
+
+**Crosstalk**
+
+- Widgets are using a shared dataset, so if you change the data in one widget, it will change in every other widget linked to that data.
+
+:::
+
+::: {.column width="50%"}
+
+### Brushing Example:
+
+![source: Carson Sievert](https://talks.cpsievert.me/20191115/brushing-filtering.gif){width=90%}
+:::
+::::
+
+## Brushing: Exercise{background-image="img/title_left.PNG" background-size="cover"}
+
+:::: {.columns}
+
+::: {.column width="40%"}
+
+Here we use the brush options which are native to the shiny package.
+
+We give the output plot an id within `brushOpts()` which in turn creates a new input.
+
+That input can then be fed back to the server to subset the data in the plot to render a new map.
+
+```{r brush1, echo = TRUE, eval = FALSE, 'code-line-numbers'="5-7"}
+# From UI
+  mainPanel(
+    fluidRow(
+      column(5,
+             plotOutput("plot",
+                        brush = brushOpts(
+                          id = "plot_brush"))),
+      column(7,
+             leafletOutput("map"))
+    )
+  )
+```
+
+:::
+
+::: {.column width="60%"}
+```{r brush2, eval = FALSE, echo = TRUE, 'code-line-numbers'="3-5,17-19"}
+# From Server
+# Create subset of points to map
+  sf.brushed <- reactive({
+    brushedPoints(sf.filt(), input$plot_brush, xvar = input$x,yvar = input$y)
+  })
+  
+  # Create a map and color by a selected column
+  observe({
+    # Get column we have selected to use as the color
+    col.color <- st_drop_geometry(sf.brushed())[, paste(input$color)]
+    
+    # generate a color palette
+    pal <- colorNumeric(
+      palette = "Blues",
+      domain = col.color)
+    
+    # Put color into the sf object
+    sf.map <- sf.brushed()
+    sf.map$color <- pal(col.color)
+    
+    # Create Map
+    output$map <- renderLeaflet(
+      leaflet(sf.map)%>%
+        addTiles()%>%
+        addPolygons(color = "#3c3d3c",stroke = TRUE,weight = 2,
+                    fillColor = sf.map$color, fillOpacity = 1,
+                    popup = paste0("<strong>",sf.map$County,"</strong><br>",
+                                  "Population:",format(sf.map$Population,big.mark = ","),"<br>",
+                                  "Median Home Value: $",format(sf.map$Med_House_Val,big.mark = ",")))%>%
+        addLegend(pal = pal, values = col.color, title = input$color)
+    )
+  })
+```
+
+Open the App.R file in the folder 'Apps/05_brushing'
+:::
+::::
+
+## Crosstalk{background-image="img/title_left.PNG" background-size="cover"}
+
+Crosstalk is both more simple and more complicated than brushing depending on what your goal is.
+
+The syntax can also be confusing while you learn how to use it.
+
+### Server function modified for crosstalk
+
+```{r crosstalk, echo = TRUE, eval = FALSE, 'code-line-numbers'="12-13|3-10"}
+# Define server logic required to draw a histogram
+server <- function(input, output) {
+  # Get column numbers
+  col.nums <- reactive(match(c(input$x,input$y,input$x2,input$y2),names(df)))
+  # create a new data frame with selected variables
+  df.sel <- reactive(
+    df%>%
+      select(col.nums())%>%
+      setNames(c("X","Y","X2","Y2"))
+  )
+  
+  # Create shared data frame
+  shared.df <- SharedData$new(df.sel)
+  
+  # left Plot
+  output$lplot <- renderD3scatter({
+    d3scatter(shared.df, ~X,~Y, width = "100%")
+  })
+  
+  # Right Plot
+  output$rplot <- renderD3scatter({
+    d3scatter(shared.df, ~X2,~Y2, width = "100%")
+  })
+}
+```
 
 
-## Generating Reports
+## Generating Reports (In the App){background-image="img/title_left.PNG" background-size="cover"}
+
+Generating reports from a shiny app is fairly straightforward once you understand how to pass data from an app to document script like RMarkdown or quarto.
+
+This goes in the UI
+```{r downloadButton, echo = TRUE, eval = FALSE}
+downloadButton("report", "Generate report")
+```
+
+This goes in the server
+```{r downloadserver, echo = TRUE, eval = FALSE}
+output$report <- downloadHandler(
+        # For PDF output, change this to "report.pdf"
+        filename = "report.html",
+        content = function(file) {
+            # Copy the report file to a temporary directory before processing it, in
+            # case we don't have write permissions to the current working dir (which
+            # can happen when deployed).
+            tempReport <- file.path(tempdir(), "report.Rmd")
+            file.copy("report.Rmd", tempReport, overwrite = TRUE)
+
+            # Knit the document, passing in the `params` list, and eval it in a
+            # child of the global environment (this isolates the code in the document
+            # from the code in this app).
+            rmarkdown::render(tempReport, output_file = file,
+                              params = list(IDs = reportRows(),Lusts = reportReleases()),
+                              envir = new.env(parent = globalenv())
+            )
+        }
+    )
+```
+
+## Generating Reports (In the Document){background-image="img/title_left.PNG" background-size="cover"}
+
+:::: {.columns}
+::: {.column width="50%"}
+In this example, the shiny app is filtering down a data frame based on selections made by the end user. When the user clicks the generate report button, two tables are then passed to .Rmd file. The file knows to accept those tables based on the parameters in the header.
+
+Take a few minutes to understand how the app is handling the data and make sure you can generate a report
+
+- Can you change the server side code to give the file a more relevant name?
+- Try manipulating the .Rmd document to add a feature or change the behavior of the current features.
+
+:::
+
+::: {.column width="50%"}
+
+The shiny app creates parameters which it passes to a document in a separate script in the same directory
+
+You write your document just as you normally would with one main difference
+```{r docside, eval = FALSE, echo = TRUE}
+---
+title: "Report for Selected Communities"
+output: html_document
+params:
+  IDs: NA
+  Lusts: NA
+---
+# Selected Block Groups
+blkGrps <- as.data.frame(params$IDs)
+releases <- as.data.frame(params$Lusts)
+```
+
+Open the App.R and the .Rmd files in the 'Apps/07_reports' folder
+
+```{r}
+countdown(minutes = 10,
+          warn_when = 30)
+```
+
+:::
 
 
-## Fetching Data from an API
+::::
 
 
-## Fetching Data from a feature Service
+
+## Fetching Data from an API{background-image="img/title_left.PNG" background-size="cover"}
+Updating data can vary based on your needs
+
+:::: {.columns}
+::: {.column width="50%"}
+- Census data every year?
+- SDWA data every quarter?
+- ECHO data every week?
+- Flood warnings every day?
+- Precipitation data every 4 hours?
+
+You could...
+- fetch data every time your app loads from the internet
+- run a script every day that updates the data your shiny app uses
+- do it manually when you need to
+- If you can find it on the internet, you can almost always access it from an R session.
+:::
+
+::: {.column width="50%"}
+Using an API (ECHO)
+
+Many r packages we use often are simply functions that call an API, basically a web based data delivery system. Not all data we use has a nice package but it's not too difficult to write your own function.
+
+```{r api, echo = TRUE, eval = FALSE}
+# Build url to get Query ID
+print("Getting Query ID for selected Area...")
+url <- paste0("https://echodata.epa.gov/echo/echo_rest_services.get_facilities?output=JSON&p_c1lat=",
+                bb[4],"&p_c1lon=",bb[1],"&p_c2lat=",bb[2],"&p_c2lon=",bb[3])
+  
+# Get Query ID
+res <- GET(url)
+data <- fromJSON(rawToChar(res$content))
+qid <- data$Results$QueryID
+  
+# Use QID to pull facility data
+print("Downloading Facility Data...")
+gres <- GET(paste0("https://echodata.epa.gov/echo/echo_rest_services.get_geojson?qid=",qid))
+gdata <- fromJSON(rawToChar(gres$content))
+```
 
 
-## Deploying to POSIT Connect
+:::
+::::
 
 
-## PINS
+## Fetching Data from a feature Service{background-image="img/title_left.PNG" background-size="cover"}
 
+:::: {.columns}
+::: {.column width="50%"}
+Another way to get data is from ArcGIS Online, which many agencies (including us) use to host a lot of spatial data...
+
+You can query a public feature service from ArcGIS directly into R
+
+- No ArcGIS license required
+- No ArcGIS binding required
+:::
+
+::: {.column width="50%"}
+```{r featureService, eval=FALSE, echo=TRUE}
+# Download USTFinder Data
+# Facilities
+url0 <- parse_url("https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services")
+url0$path <- paste(url0$path, "UST_Finder_Feature_Layer_2/FeatureServer/0/query", sep = "/")
+url0$query <- list(geometryType="esriGeometryEnvelope",
+                   geometry=bbStr,
+                   outFields = "*",
+                   returnGeometry = "true",
+                   f = "geojson")
+request0 <- build_url(url0)
+
+fac <- st_read(request0)
+```
+
+:::
+::::
+
+## Deploying to POSIT Connect{background-image="img/title_left.PNG" background-size="cover"}
+
+:::: {.columns}
+::: {.column width="50%"}
+![](img/connectflow.png)
+:::
+
+::: {.column width="50%"}
+- **Cannot** directly publish to production servers
+- **Can** publish to a staging server & share internally
+- After a thorough review, the R users can then request that their apps be promoted to a production server.
+- Can request a vanity URL and any other parameters to be set on the app such as run schedule.
+- You need to request a publisher role (Agency has 200)
+- Any EPA user can view with EPA login (VPN required)
+:::
+::::
+
+## Pins{background-image="img/title_left.PNG" background-size="cover"}
+
+:::: {.columns}
+::: {.column width="80%"}
+### Handling data generated from a shiny application can be tricky...
+
+- When a Shiny app runs, it runs in an isolated environment and does not save data.
+  - When you generate a report, that report goes straight to you and is **not** saved on the server.
+  - This can complicate things if you are collaborating with others or want to save the results of an analysis to be recycled into your app at a later time.
+  
+  Pins is a package that allows you to read and write data items to POSIT Connect.
+  - This can be basically any r object like data frames, models, scripts etc...
+  
+  While this may seem basic, it is incredibly powerful
+  
+  It's also not quite working yet at EPA...
+:::
+::: {.column width="20%"}
+![](img/pins.png)
+:::
+
+::::
+
+
+## Resources{background-image="img/title_left.PNG" background-size="cover"}
+
+Thanks for Joining!
+
+:::: {.columns}
+::: {.column width="30%"}
+![](https://media4.giphy.com/media/26u4lOMA8JKSnL9Uk/200.webp?cid=ecf05e477y7kupexmnxjedygthgqd1j7youtxolkce6hmvap&ep=v1_gifs_search&rid=200.webp&ct=g)
+
+More Questions?
+
+Murray.AndrewR@epa.gov
+:::
+
+::: {.column width="70%"}
+[Mastering Shiny (Free Online Book)](https://mastering-shiny.org/)
+
+[R Shiny Cheatsheet](https://shiny.posit.co/r/articles/start/cheatsheet/)
+
+[Crosstalk](https://rstudio.github.io/crosstalk/)
+
+[Brushing (slide deck)](https://talks.cpsievert.me/20191115/#1)
+
+[Pins](https://pins.rstudio.com/)
+
+[EPA Connect Server](https://rstudio-connect.dmap-stage.aws.epa.gov/connect/#/content/listing?filter=min_role:viewer&filter=content_type:all&view_type=compact)
+
+:::
+::::

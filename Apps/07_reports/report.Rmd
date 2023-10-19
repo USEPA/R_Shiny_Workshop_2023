@@ -1,0 +1,128 @@
+---
+title: "Report for Selected Communities"
+output: html_document
+params:
+  IDs: NA
+  Lusts: NA
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+library(tidyverse)
+library(leaflet)
+library(here)
+library(vroom)
+
+# Selected Block Groups
+blkGrps <- as.data.frame(params$IDs)
+releases <- as.data.frame(params$Lusts)
+
+```
+
+
+# Report of Selected Communities with Open Releases
+Generated: `r Sys.Date()` 
+United States Environmental Protection Agency: Office of Research and Development
+
+## Selected Block Groups (National Percentiles)
+Statistics for the selected block groups are shown in the table below.
+```{r NationalTable}
+# The `params` object is available in the document.
+nat <- blkGrps%>%
+  select(ID,ACSTOTPOP,MINORPCT,LOWINCPCT,N_Releases,
+                   N_P_LDPNT,N_P_DSLPM,N_P_CANCR,N_P_RESP,N_P_PTRAF,N_P_PWDIS,N_P_PNPL,
+                   N_P_PRMP,N_P_PTSDF,N_P_OZONE,N_P_PM25)
+
+datatable(nat, colnames = c("Block Group","Population","% Minority","% Low Income","# Active Releases",
+          "Lead Paint","Diesel PM","Cancer","Air Toxics","Traffic","Discharge to Water","NPL Sites",
+          "RMP Sites","TSDF Sites","O-Zone","PM 2.5"),extensions = 'FixedColumns',rownames = FALSE,
+  options = list(
+    dom = 't',
+    scrollX = TRUE,
+    fixedColumns = list(leftColumns = 1)))%>%
+  formatStyle('N_Releases',
+    color = styleInterval(c(1,5), c('black', 'black', 'white')),
+    backgroundColor = styleInterval(c(1,5), c('#d1c758', '#c48210', '#c22a0c')))%>%
+  formatStyle(c("N_P_LDPNT","N_P_DSLPM","N_P_CANCR","N_P_RESP","N_P_PTRAF","N_P_PWDIS","N_P_PNPL",
+                   "N_P_PRMP","N_P_PTSDF","N_P_OZONE","N_P_PM25"),
+              color = styleInterval(c(50,80,95), c('black','black', 'black', 'white')),
+    backgroundColor = styleInterval(c(50,80,95), c('#37a619','#d1c758', '#c48210', '#c22a0c')))%>%
+  formatPercentage(c("MINORPCT","LOWINCPCT"), 0)
+```
+
+## Selected Block Groups (State Percentiles)
+```{r StateTable}
+state <- blkGrps%>%
+  select(ID,ACSTOTPOP,MINORPCT,LOWINCPCT,N_Releases,
+                   ST_P_LDPNT,ST_P_DSLPM,ST_P_CANCR,ST_P_RESP,ST_P_PTRAF,ST_P_PWDIS,ST_P_PNPL,
+                   ST_P_PRMP,ST_P_PTSDF,ST_P_OZONE,ST_P_PM25)
+
+datatable(state,colnames = c("Block Group","Population","% Minority","% Low Income","# Active Releases",
+          "Lead Paint","Diesel PM","Cancer","Air Toxics","Traffic","Discharge to Water","NPL Sites",
+          "RMP Sites","TSDF Sites","O-Zone","PM 2.5"),extensions = 'FixedColumns',rownames = FALSE,
+  options = list(
+    dom = 't',
+    scrollX = TRUE,
+    fixedColumns = list(leftColumns = 1)))%>%
+  formatStyle('N_Releases',
+    color = styleInterval(c(1,5), c('black', 'black', 'white')),
+    backgroundColor = styleInterval(c(1,5), c('#d1c758', '#c48210', '#c22a0c')))%>%
+  formatStyle(c("ST_P_LDPNT","ST_P_DSLPM","ST_P_CANCR","ST_P_RESP","ST_P_PTRAF","ST_P_PWDIS","ST_P_PNPL",
+                   "ST_P_PRMP","ST_P_PTSDF","ST_P_OZONE","ST_P_PM25"),
+              color = styleInterval(c(50,80,95), c('black','black', 'black', 'white')),
+    backgroundColor = styleInterval(c(50,80,95), c('#37a619','#d1c758', '#c48210', '#c22a0c')))%>%
+  formatPercentage(c("MINORPCT","LOWINCPCT"), 0)
+```
+
+
+## Map of Block Groups
+```{r leaflet}
+# Map Releases
+
+leaflet(blkGrps)%>%
+  addProviderTiles(providers$Esri.WorldImagery)%>%
+  addWMSTiles(
+                "https://tigerweb.geo.census.gov/arcgis/services/Census2020/tigerWMS_Census2010/MapServer/WMSServer",
+                layers = "Census_Block_Groups59805",
+                options = WMSTileOptions(format = "image/png", transparent = TRUE),
+                attribution = "U.S. Census Bureau - 2020 Tiger"
+            )%>%
+  addCircleMarkers(
+    radius = 12,
+                color = "#b52121",
+                stroke = FALSE, fillOpacity = 0.5
+  )
+
+```
+
+## Seleceted Releases
+```{r releases}
+datatable(releases,extensions = 'FixedColumns',rownames = FALSE,
+  options = list(
+    dom = 't',
+    scrollX = TRUE,
+    fixedColumns = list(leftColumns = 2),pageLength = 6)
+  )
+```
+
+
+## Map of Releases
+
+
+```{r releaseMap}
+leaflet(releases)%>%
+  addProviderTiles(providers$Esri.WorldImagery)%>%
+  addCircleMarkers(
+    radius = 6,
+    color = "black",
+    fillColor = "#b52121",
+    stroke = TRUE,
+    fillOpacity = 1,
+    popup = ~paste0("<b>",Name,"</b><br>",
+                   "Address: ", Address,"<br>",
+                   "City: ",City,"<br>",
+                   "LUST ID: ",LUST_ID,"<br>",
+                   "Reported: ",Reported_Date)
+  )
+```
+
